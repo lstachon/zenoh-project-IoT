@@ -1,7 +1,7 @@
 from zenoh import Zenoh, ChangeKind
 import time
 
-from commonUtils import *
+from common import *
 
 energyConsumed = 0
 lampsWattageMap = {}
@@ -11,7 +11,7 @@ def listener(change):
     global energyConsumed
 
     if change.kind == ChangeKind.PUT:
-        time = float(getContentWithBraces(change.value))
+        time = change.value.get_content()
         lampId = change.path.split('/')[4]
         energyConsumed += round(lampsWattageMap[lampId] * time, 2)
         printTotalEnergyConsumed()
@@ -21,7 +21,7 @@ def register(change):
     global lampsWattageMap
 
     if change.kind == ChangeKind.PUT:
-        wattage = int(getContentWithQuotes(change.value))
+        wattage = change.value.get_content()
         lampId = change.path.split('/')[4]
         lampsWattageMap[lampId] = wattage
 
@@ -31,8 +31,8 @@ def printTotalEnergyConsumed():
 
 
 def loop():
-    r1 = w.subscribe('/bank/manager/lamp/**/register', register)
-    r2 = w.subscribe('/bank/manager/lamp/**/time', listener)
+    r1 = w.subscribe('/bank/manager/lamp/*/register', register)
+    r2 = w.subscribe('/bank/manager/lamp/*/time', listener)
     while True:
         time.sleep(1)
 

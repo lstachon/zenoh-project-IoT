@@ -3,12 +3,13 @@ import random
 import time
 import sys
 
-from commonUtils import *
+from common import *
+
+ENTER = 1
+EXIT = -1
 
 random.seed()
 roomId = sys.argv[1]
-ENTER = 1
-EXIT = -1
 peopleCounter = 0
 
 
